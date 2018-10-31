@@ -57,6 +57,20 @@ public class HartleyTransformationsTest {
   }
 
   @Test
+  public void hartley2DTransformWorks() {
+    double[][] source = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
+    print2DArray("Source", source);
+
+    double[][] computed = HartleyTransformations.computeDiscreteHartleyTransform2D(source);
+    print2DArray("Computed", computed);
+
+    double[][] computedBack = HartleyTransformations.computeReverseDiscreteHartleyTransform2D(computed);
+    print2DArray("Computed Back", computedBack);
+
+    assertArraysAreEqual(source, computedBack);
+  }
+
+  @Test
   public void hartleyMatrixGenerationWorks() {
     double[][] matrix2 = new double[][] { {1.0, 1.0}, {1.0, -1.0} };
     double[][] computedMatrix2 = HartleyTransformations.computeHartleyMatrix(2);
