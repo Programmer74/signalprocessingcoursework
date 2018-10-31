@@ -36,7 +36,7 @@ public class HartleyTransformations {
     return result;
   }
 
-  public static double[][] computeDiscreteHartleyTransform2D(double[][] a) {
+  public static double[][] computeDiscreteHartleyTransform(double[][] a) {
 
     double[][] input = a.clone();
 
@@ -64,7 +64,7 @@ public class HartleyTransformations {
     return result;
   }
 
-  public static double[][] computeReverseDiscreteHartleyTransform2D(double[][] a) {
+  public static double[][] computeReverseDiscreteHartleyTransform(double[][] a) {
 
     double[][] input = a.clone();
 
