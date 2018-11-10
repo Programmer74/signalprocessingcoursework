@@ -1,42 +1,41 @@
 package com.programmer74.signalprocessing.utils
 
+import com.programmer74.signalprocessing.customnumerics.Numeric
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 
-object TestUtils {
-
-  fun printArray(name: String, x: DoubleArray) {
-    println(name + "{")
-    for (i in x.indices) {
-      System.out.printf(" %f", x[i])
-    }
-    println("}")
+fun printArray(name: String, x: Array<Numeric>) {
+  println(name + "{")
+  for (i in x.indices) {
+    System.out.printf(" %f", x[i].getValue())
   }
+  println("}")
+}
 
-  fun printArray(name: String, x: Array<DoubleArray>) {
-    println(name + "{")
-    for (i in x.indices) {
-      for (j in 0..x[i].size - 1) {
-        System.out.printf(" %f", x[i][j])
-      }
-      println("")
+fun printArray(name: String, x: Array<Array<Numeric>>) {
+  println(name + "{")
+  for (i in x.indices) {
+    for (j in 0 until x[i].size) {
+      System.out.printf(" %f", x[i][j].getValue())
     }
-    println("}")
+    println("")
   }
+  println("}")
+}
 
-  fun assertArraysAreEqual(a1: Array<DoubleArray>, a2: Array<DoubleArray>) {
-    assertThat(a1.size).isEqualTo(a2.size)
-    assertThat(a1[0].size).isEqualTo(a2[0].size)
-    for (i in a1.indices) {
-      for (j in 0..a1[0].size - 1) {
-        assertThat(Math.abs(a1[i][j] - a2[i][j])).isLessThan(0.0001)
-      }
-    }
-  }
-
-  fun assertArraysAreEqual(a1: DoubleArray, a2: DoubleArray) {
-    assertThat(a1.size).isEqualTo(a2.size)
-    for (i in a1.indices) {
-      assertThat(Math.abs(a1[i] - a2[i])).isLessThan(0.0001)
+fun assertArraysAreEqual(a1: Array<Array<Numeric>>, a2: Array<Array<Numeric>>) {
+  assertThat(a1.size).isEqualTo(a2.size)
+  assertThat(a1[0].size).isEqualTo(a2[0].size)
+  for (i in a1.indices) {
+    for (j in 0 until a1[0].size) {
+      assertThat(a1[i][j]).isEqualTo(a2[i][j])
     }
   }
 }
+
+fun assertArraysAreEqual(a1: Array<Numeric>, a2: Array<Numeric>) {
+  assertThat(a1.size).isEqualTo(a2.size)
+  for (i in a1.indices) {
+    assertThat(a1[i]).isEqualTo(a2[i])
+  }
+}
+

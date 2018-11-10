@@ -2,28 +2,28 @@ package com.programmer74.signalprocessing.customnumerics
 
 
 data class DoubleNumeric(private val value: Double) : Numeric {
-  operator fun plus(y: Double) : Numeric {
+  override operator fun plus(y: Double) : Numeric {
     return DoubleNumeric(value + y)
   }
-  operator fun plus(y: Numeric) : Numeric {
+  override operator fun plus(y: Numeric) : Numeric {
     return DoubleNumeric(value + y.getValue())
   }
-  operator fun minus(y: Double) : Numeric {
+  override operator fun minus(y: Double) : Numeric {
     return DoubleNumeric(value - y)
   }
-  operator fun minus(y: Numeric) : Numeric {
+  override operator fun minus(y: Numeric) : Numeric {
     return DoubleNumeric(value - y.getValue())
   }
-  operator fun times(y: Double) : Numeric {
+  override operator fun times(y: Double) : Numeric {
     return DoubleNumeric(value * y)
   }
-  operator fun times(y: Numeric) : Numeric {
+  override operator fun times(y: Numeric) : Numeric {
     return DoubleNumeric(value * y.getValue())
   }
-  operator fun div(y: Double) : Numeric {
+  override operator fun div(y: Double) : Numeric {
     return DoubleNumeric(value / y)
   }
-  operator fun div(y: Numeric) : Numeric {
+  override operator fun div(y: Numeric) : Numeric {
     return DoubleNumeric(value / y.getValue())
   }
   override fun equals(other: Any?): Boolean {

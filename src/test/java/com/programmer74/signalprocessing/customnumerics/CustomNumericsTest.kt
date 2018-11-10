@@ -14,6 +14,30 @@ class CustomNumericsTest () {
   }
 
   @Test
+  fun `double numerics subtraction works` () {
+    val x = DoubleNumeric(5.0)
+    val y = DoubleNumeric(4.0)
+    val z = x - y
+    assertThat(z).isEqualTo(DoubleNumeric(1.0))
+  }
+
+  @Test
+  fun `double numerics multiplication works` () {
+    val x = DoubleNumeric(5.0)
+    val y = DoubleNumeric(4.0)
+    val z = x * y
+    assertThat(z).isEqualTo(DoubleNumeric(20.0))
+  }
+
+  @Test
+  fun `double numerics division works` () {
+    val x = DoubleNumeric(5.0)
+    val y = DoubleNumeric(4.0)
+    val z = x / y
+    assertThat(z).isEqualTo(DoubleNumeric(1.25))
+  }
+
+  @Test
   fun `double numerics trigonometry works` () {
     val x = 5.0
     val y = DoubleNumeric(x)
