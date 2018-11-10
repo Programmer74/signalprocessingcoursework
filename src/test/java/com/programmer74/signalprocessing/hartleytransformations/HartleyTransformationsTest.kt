@@ -1,6 +1,8 @@
 package com.programmer74.signalprocessing.hartleytransformations
 
+import com.programmer74.signalprocessing.customnumerics.CustomFPNumeric
 import com.programmer74.signalprocessing.customnumerics.DoubleNumeric
+import com.programmer74.signalprocessing.customnumerics.customfpNumericArrayOf
 import com.programmer74.signalprocessing.customnumerics.doubleNumericArrayOf
 import org.junit.Test
 
@@ -57,5 +59,20 @@ class HartleyTransformationsTest {
     val computedMatrix4 = transforms.computeHartleyMatrix(4)
     printArray("HartleyMatrix4", computedMatrix4)
     assertArraysAreEqual(matrix4, computedMatrix4)
+  }
+
+  @Test
+  fun hartleyTransformWorksForCustomFP() {
+    val source = customfpNumericArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
+    val transforms = HartleyTransformations(CustomFPNumeric(0.0, 32))
+    printArray("Source", source)
+
+    val computed = transforms.computeDiscreteHartleyTransform(source)
+    printArray("Computed", computed)
+
+    val computedBack = transforms.computeReverseDiscreteHartleyTransform(computed)
+    printArray("Computed Back", computedBack)
+
+    assertArraysAreEqual(source, computedBack)
   }
 }

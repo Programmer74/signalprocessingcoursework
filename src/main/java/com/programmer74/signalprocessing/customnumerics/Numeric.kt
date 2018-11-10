@@ -26,3 +26,12 @@ fun doubleNumericArrayOf(vararg elements: Double): Array<Numeric> {
   }
   return result
 }
+
+fun customfpNumericArrayOf(vararg elements: Double): Array<Numeric> {
+  val bits = 32
+  val result = Array<Numeric>(elements.size, { CustomFPNumeric(0.0, bits) })
+  for (i in 0 until elements.size) {
+    result[i] = CustomFPNumeric(elements[i], bits)
+  }
+  return result
+}

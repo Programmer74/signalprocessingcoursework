@@ -19,7 +19,7 @@ class CustomFPNumericsTest {
     arguments.forEach { double, binary ->
       val x = CustomFPNumeric(double, 8, 23)
       println(x)
-      assertThat(x.toString()).isEqualTo(binary)
+      assertThat(x.toBinaryString()).isEqualTo(binary)
       assertThat(x.getValue()).isCloseTo(double, Percentage.withPercentage(1.0))
     }
   }
