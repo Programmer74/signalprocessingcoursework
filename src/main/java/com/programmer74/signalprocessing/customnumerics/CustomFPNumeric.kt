@@ -112,6 +112,10 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
   }
 
   override fun toString(): String {
+    return "CFP: ${getValue()}"
+  }
+
+  fun toBinaryString(): String {
     val sb = StringBuilder()
     for (i in 0 until bitsSize) {
       sb.append("${if (bits.get(i)) 1 else 0}")
@@ -144,11 +148,11 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
   }
 
   override fun div(y: Double): Numeric {
-    return CustomFPNumeric(y / getValue(), bitsPerE, bitsPerM)
+    return CustomFPNumeric(getValue() / y, bitsPerE, bitsPerM)
   }
 
   override fun div(y: Numeric): Numeric {
-    return CustomFPNumeric(y.getValue() / getValue(), bitsPerE, bitsPerM)
+    return CustomFPNumeric(getValue() / y.getValue(), bitsPerE, bitsPerM)
   }
 
   override fun computeSin(): Numeric {
