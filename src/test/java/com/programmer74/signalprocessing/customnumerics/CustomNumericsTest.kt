@@ -6,10 +6,19 @@ import org.assertj.core.api.AssertionsForClassTypes.assertThat
 class CustomNumericsTest () {
 
   @Test
-  fun `double numerics seems to be working normally` () {
-    val x = DoubleNumerics(5.0)
-    val y = DoubleNumerics(4.0)
+  fun `double numerics addition works` () {
+    val x = DoubleNumeric(5.0)
+    val y = DoubleNumeric(4.0)
     val z = x + y
-    assertThat(z.value).isEqualTo(9.0)
+    assertThat(z).isEqualTo(DoubleNumeric(9.0))
+  }
+
+  @Test
+  fun `double numerics trigonometry works` () {
+    val x = 5.0
+    val y = DoubleNumeric(x)
+    val a = Math.sin(x)
+    val b = y.computeSin()
+    assertThat(a).isEqualTo(b.getValue())
   }
 }
