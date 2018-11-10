@@ -36,14 +36,14 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
     bits.set(0, sign)
 
     var xCopy = Math.abs(x)
-    var exponent = exponentOffset
+    var exponent = if (xCopy != 0.0) exponentOffset else 0
     if (xCopy > 1) {
-      while (xCopy >= radix) {
+      while (xCopy >= radix && (xCopy != 0.0)) {
         xCopy /= radix
         exponent++
       }
     } else {
-      while (xCopy < 1) {
+      while ((xCopy < 1) && (xCopy != 0.0)) {
         xCopy *= radix
         exponent--
       }
@@ -52,6 +52,9 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
     for (i in bitsPerE downTo 1) {
       bits.set(i, exponent % 2 != 0)
       exponent /= 2
+    }
+    if (exponent > 0) {
+      System.err.println("EXPONENT DOESNT FIT TO ${bitsPerE} FOR VALUE ${x} ")
     }
 
     var mantissa = xCopy
@@ -69,14 +72,6 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
     }
   }
 
-  override fun toString(): String {
-    val sb = StringBuilder()
-    for (i in 0 until bitsSize) {
-      sb.append("${if (bits.get(i)) 1 else 0}")
-    }
-    return sb.toString()
-  }
-
   override fun getValue(): Double {
 
     log("=======--------")
@@ -85,21 +80,29 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
     log("sign: ${sign}")
 
     var exponent = 0
+    var exponentWasZero = false
     for (i in 0 until bitsPerE) {
       if (bits.get(bitsPerE - i)) {
         exponent += Math.pow(2.0, i.toDouble()).toInt()
       }
     }
-    exponent -= exponentOffset
+    if (exponent != 0) {
+      exponent -= exponentOffset
+    } else {
+      exponentWasZero = true
+    }
     log("exponent: ${exponent}")
 
-    var mantissa = 1.0
+    var mantissa = 0.0
     var power = -1.0
     for (i in bitsPerE + 1 until bitsSize) {
       if (bits.get(i)) {
         mantissa += Math.pow(2.0, power)
       }
       power--
+    }
+    if (((mantissa == 0.0) && exponentWasZero).not()) {
+      mantissa += 1
     }
     log("mantissa: ${mantissa}")
 
@@ -108,44 +111,52 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
     return res
   }
 
+  override fun toString(): String {
+    val sb = StringBuilder()
+    for (i in 0 until bitsSize) {
+      sb.append("${if (bits.get(i)) 1 else 0}")
+    }
+    return sb.toString()
+  }
+
   override fun plus(y: Double): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y + getValue(), bitsPerE, bitsPerM)
   }
 
   override fun plus(y: Numeric): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y.getValue() + getValue(), bitsPerE, bitsPerM)
   }
 
   override fun minus(y: Double): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y - getValue(), bitsPerE, bitsPerM)
   }
 
   override fun minus(y: Numeric): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y.getValue() - getValue(), bitsPerE, bitsPerM)
   }
 
   override fun times(y: Double): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y * getValue(), bitsPerE, bitsPerM)
   }
 
   override fun times(y: Numeric): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y.getValue() * getValue(), bitsPerE, bitsPerM)
   }
 
   override fun div(y: Double): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y / getValue(), bitsPerE, bitsPerM)
   }
 
   override fun div(y: Numeric): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(y.getValue() / getValue(), bitsPerE, bitsPerM)
   }
 
   override fun computeSin(): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(Math.sin(getValue()), bitsPerE, bitsPerM)
   }
 
   override fun computeCos(): Numeric {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    return CustomFPNumeric(Math.cos(getValue()), bitsPerE, bitsPerM)
   }
 
   override fun equals(other: Any?): Boolean {

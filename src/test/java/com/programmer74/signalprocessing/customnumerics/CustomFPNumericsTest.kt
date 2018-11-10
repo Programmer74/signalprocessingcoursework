@@ -26,7 +26,7 @@ class CustomFPNumericsTest {
 
   @Test
   fun `custom fp numerics works fine for custom bits size`() {
-    val arguments = listOf(5.0, -5.0, -0.1231, 0.312312, 0.5, 256.0)
+    val arguments = listOf(0.0, 1.0, 5.0, -5.0, -0.1231, 0.312312, 0.5, 256.0)
     val bitsAmount = listOf(10, 12, 16, 24, 32)
 
     arguments.forEach { double ->
@@ -35,6 +35,25 @@ class CustomFPNumericsTest {
         val x = CustomFPNumeric(double, bits)
         println(x)
         assertThat(x.getValue()).isCloseTo(double, Percentage.withPercentage(3.0))
+      }
+    }
+  }
+
+  @Test
+  fun `custom fp calculations work`() {
+    val arguments = listOf(5.0, -5.0, -0.1231, 0.312312, 0.5)
+    val bitsAmount = listOf(10, 12, 16, 24, 32)
+
+    arguments.forEach { double1 ->
+      arguments.forEach { double2 ->
+        bitsAmount.forEach { bits ->
+          val x = CustomFPNumeric(double1, bits)
+          val y = CustomFPNumeric(double2, bits)
+          println("At ${double1} + ${double2} for bits ${bits}")
+          val z = x + y
+          assertThat(z.getValue())
+              .isCloseTo(double1 + double2, Percentage.withPercentage(7.0))
+        }
       }
     }
   }
