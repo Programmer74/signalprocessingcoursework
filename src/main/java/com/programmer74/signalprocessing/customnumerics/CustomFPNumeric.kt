@@ -14,7 +14,7 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
 
   private val shouldDebug = false
 
-  constructor(x: Double, bitsSize: Int) : this (x, bitsSize - (bitsSize) * 3 / 4, (bitsSize) * 3 / 4 - 1)
+  constructor(x: Double, bitsSize: Int) : this (x, bitsSize - (bitsSize) * 2 / 3, (bitsSize) * 2 / 3 - 1)
 
   private fun log(s: String) {
     if (shouldDebug) {
@@ -90,8 +90,8 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
         exponent += Math.pow(2.0, i.toDouble()).toInt()
       }
     }
-    log("exponent: ${exponent}")
     exponent -= exponentOffset
+    log("exponent: ${exponent}")
 
     var mantissa = 1.0
     var power = -1.0

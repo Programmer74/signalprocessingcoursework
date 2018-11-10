@@ -17,10 +17,25 @@ class CustomFPNumericsTest {
     arguments[256.0] = "01000011100000000000000000000000"
 
     arguments.forEach { double, binary ->
-      val x = CustomFPNumeric(double, 32)
+      val x = CustomFPNumeric(double, 8, 23)
       println(x)
       assertThat(x.toString()).isEqualTo(binary)
       assertThat(x.getValue()).isCloseTo(double, Percentage.withPercentage(1.0))
+    }
+  }
+
+  @Test
+  fun `custom fp numerics works fine for custom bits size`() {
+    val arguments = listOf(5.0, -5.0, -0.1231, 0.312312, 0.5, 256.0)
+    val bitsAmount = listOf(10, 12, 16, 24, 32)
+
+    arguments.forEach { double ->
+      bitsAmount.forEach { bits ->
+        println("At ${double} for bits ${bits}")
+        val x = CustomFPNumeric(double, bits)
+        println(x)
+        assertThat(x.getValue()).isCloseTo(double, Percentage.withPercentage(3.0))
+      }
     }
   }
 }
