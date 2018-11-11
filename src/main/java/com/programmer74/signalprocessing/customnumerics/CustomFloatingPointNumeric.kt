@@ -2,7 +2,7 @@ package com.programmer74.signalprocessing.customnumerics
 
 import java.util.*
 
-class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Numeric {
+class CustomFloatingPointNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Numeric {
 
   private val bitsPerS = 1
   private val bitsSize: Int = bitsPerE + bitsPerM + bitsPerS
@@ -112,7 +112,7 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
   }
 
   override fun toString(): String {
-    return "CFP: ${getValue()}"
+    return "CFlP: ${getValue()}"
   }
 
   fun toBinaryString(): String {
@@ -124,43 +124,43 @@ class CustomFPNumeric(val x: Double, val bitsPerE: Int, val bitsPerM: Int) : Num
   }
 
   override fun plus(y: Double): Numeric {
-    return CustomFPNumeric(y + getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y + getValue(), bitsPerE, bitsPerM)
   }
 
   override fun plus(y: Numeric): Numeric {
-    return CustomFPNumeric(y.getValue() + getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y.getValue() + getValue(), bitsPerE, bitsPerM)
   }
 
   override fun minus(y: Double): Numeric {
-    return CustomFPNumeric(y - getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y - getValue(), bitsPerE, bitsPerM)
   }
 
   override fun minus(y: Numeric): Numeric {
-    return CustomFPNumeric(y.getValue() - getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y.getValue() - getValue(), bitsPerE, bitsPerM)
   }
 
   override fun times(y: Double): Numeric {
-    return CustomFPNumeric(y * getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y * getValue(), bitsPerE, bitsPerM)
   }
 
   override fun times(y: Numeric): Numeric {
-    return CustomFPNumeric(y.getValue() * getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(y.getValue() * getValue(), bitsPerE, bitsPerM)
   }
 
   override fun div(y: Double): Numeric {
-    return CustomFPNumeric(getValue() / y, bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(getValue() / y, bitsPerE, bitsPerM)
   }
 
   override fun div(y: Numeric): Numeric {
-    return CustomFPNumeric(getValue() / y.getValue(), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(getValue() / y.getValue(), bitsPerE, bitsPerM)
   }
 
   override fun computeSin(): Numeric {
-    return CustomFPNumeric(Math.sin(getValue()), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(Math.sin(getValue()), bitsPerE, bitsPerM)
   }
 
   override fun computeCos(): Numeric {
-    return CustomFPNumeric(Math.cos(getValue()), bitsPerE, bitsPerM)
+    return CustomFloatingPointNumeric(Math.cos(getValue()), bitsPerE, bitsPerM)
   }
 
   override fun equals(other: Any?): Boolean {

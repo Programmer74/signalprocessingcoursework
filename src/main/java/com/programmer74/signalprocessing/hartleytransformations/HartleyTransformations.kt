@@ -1,6 +1,6 @@
 package com.programmer74.signalprocessing.hartleytransformations
 
-import com.programmer74.signalprocessing.customnumerics.CustomFPNumeric
+import com.programmer74.signalprocessing.customnumerics.CustomFloatingPointNumeric
 import com.programmer74.signalprocessing.customnumerics.DoubleNumeric
 import com.programmer74.signalprocessing.customnumerics.Numeric
 
@@ -9,7 +9,7 @@ class HartleyTransformations(val ref: Numeric) {
   private fun valueOf(x: Double): Numeric =
       when (ref) {
         is DoubleNumeric -> DoubleNumeric(x)
-        is CustomFPNumeric -> CustomFPNumeric(x, ref.bitsPerE, ref.bitsPerM)
+        is CustomFloatingPointNumeric -> CustomFloatingPointNumeric(x, ref.bitsPerE, ref.bitsPerM)
         else -> DoubleNumeric(x)
       }
 

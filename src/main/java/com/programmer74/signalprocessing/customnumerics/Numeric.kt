@@ -27,11 +27,21 @@ fun doubleNumericArrayOf(vararg elements: Double): Array<Numeric> {
   return result
 }
 
-fun customfpNumericArrayOf(vararg elements: Double): Array<Numeric> {
+fun customfloatPointNumericArrayOf(vararg elements: Double): Array<Numeric> {
   val bits = 32
-  val result = Array<Numeric>(elements.size, { CustomFPNumeric(0.0, bits) })
+  val result = Array<Numeric>(elements.size, { CustomFloatingPointNumeric(0.0, bits) })
   for (i in 0 until elements.size) {
-    result[i] = CustomFPNumeric(elements[i], bits)
+    result[i] = CustomFloatingPointNumeric(elements[i], bits)
+  }
+  return result
+}
+
+fun customfixedPointNumericArrayOf(vararg elements: Double): Array<Numeric> {
+  val bitsI = 11
+  val bitsM = 20
+  val result = Array<Numeric>(elements.size, { CustomFixedPointNumeric(0.0, bitsI, bitsM) })
+  for (i in 0 until elements.size) {
+    result[i] = CustomFixedPointNumeric(elements[i], bitsI, bitsM)
   }
   return result
 }
