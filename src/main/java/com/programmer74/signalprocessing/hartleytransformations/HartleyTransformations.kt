@@ -1,16 +1,47 @@
 package com.programmer74.signalprocessing.hartleytransformations
 
-import com.programmer74.signalprocessing.customnumerics.CustomFloatingPointNumeric
+import com.programmer74.signalprocessing.customnumerics.CustomFixedPointNumeric
 import com.programmer74.signalprocessing.customnumerics.DoubleNumeric
 import com.programmer74.signalprocessing.customnumerics.Numeric
 
-class HartleyTransformations(val ref: Numeric) {
+class HartleyTransformations {
+
+  private val weightKBits: Int
+
+  private val resultBits: Int
+
+  constructor() {
+    this.weightKBits = 0
+    this.resultBits = 0
+  }
+
+  constructor(n2: Int, n3: Int) {
+    this.weightKBits = n2
+    this.resultBits = n3
+  }
+
 
   private fun valueOf(x: Double): Numeric =
-      when (ref) {
-        is DoubleNumeric -> DoubleNumeric(x)
-        is CustomFloatingPointNumeric -> CustomFloatingPointNumeric(x, ref.bitsPerE, ref.bitsPerM)
-        else -> DoubleNumeric(x)
+      if (weightKBits == 0 && resultBits == 0) {
+        DoubleNumeric(x)
+      } else {
+        CustomFixedPointNumeric(x, weightKBits)
+      }
+
+  private fun resultOf(N: Int): Array<Numeric> =
+      if (weightKBits == 0 && resultBits == 0) {
+        Array(N, { DoubleNumeric(0.0) })
+      } else {
+        Array(N, { CustomFixedPointNumeric(0.0, resultBits - 5, 4) })
+      }
+
+  private fun result2DOf(N: Int): Array<Array<Numeric>> =
+      if (weightKBits == 0 && resultBits == 0) {
+        Array(N, { Array(N, { DoubleNumeric(0.0) }) })
+            as Array<Array<Numeric>>
+      } else {
+        Array(N, { Array(N, { CustomFixedPointNumeric(0.0, resultBits - 3, 2) }) })
+            as Array<Array<Numeric>>
       }
 
   private fun cas(x: Numeric) : Numeric {
@@ -21,7 +52,7 @@ class HartleyTransformations(val ref: Numeric) {
 
   fun computeDiscreteHartleyTransform(input: Array<Numeric>): Array<Numeric> {
     val N = input.size
-    val result = Array(N, { valueOf(0.0) })
+    val result = resultOf(N)
     var sum: Numeric
 
     for (n in 0 until N) {
@@ -36,7 +67,7 @@ class HartleyTransformations(val ref: Numeric) {
 
   fun computeReverseDiscreteHartleyTransform(input: Array<Numeric>): Array<Numeric> {
     val N = input.size
-    val result = Array(N, { valueOf(0.0) })
+    val result = resultOf(N)
     var sum: Numeric
 
     for (m in 0 until N) {
@@ -54,7 +85,7 @@ class HartleyTransformations(val ref: Numeric) {
     val input = a.clone()
 
     val N = input.size
-    val result = Array(N, { Array(N, { valueOf(0.0) }) })
+    val result = result2DOf(N)
     var sum: Numeric
 
     for (i in 0 until N) {
@@ -82,7 +113,7 @@ class HartleyTransformations(val ref: Numeric) {
     val input = a.clone()
 
     val N = input.size
-    val result = Array(N, { Array(N, { valueOf(0.0) }) })
+    val result = result2DOf(N)
     var sum: Numeric
 
     for (i in 0 until N) {

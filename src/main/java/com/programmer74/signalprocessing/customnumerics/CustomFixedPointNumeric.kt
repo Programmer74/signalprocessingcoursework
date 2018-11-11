@@ -10,7 +10,7 @@ class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPe
 
   private val shouldDebug = false
 
-  constructor(x: Double, bitsSize: Int) : this (x, 2, bitsSize - 3)
+  constructor(x: Double, bitsSize: Int) : this (x, (bitsSize) * 3 / 4, bitsSize - (bitsSize) * 3 / 4 - 1)
 
   private fun log(s: String) {
     if (shouldDebug) {
@@ -41,7 +41,7 @@ class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPe
       intPart /= 2
     }
     if (intPart > 0) {
-      System.err.println("INTPART DOESNT FIT TO ${intPart} FOR VALUE ${x} ")
+      System.err.println("INTPART DOESNT FIT TO ${bitsPerInteger} FOR VALUE ${x} ")
     }
     
     for (i in bitsPerInteger + 1 until bitsSize) {
