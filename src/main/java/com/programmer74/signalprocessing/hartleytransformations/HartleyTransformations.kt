@@ -90,15 +90,14 @@ class HartleyTransformations {
 
   fun computeDiscreteHartleyTransform(a: Array<Array<Numeric>>): Array<Array<Numeric>> {
 
-    val input = a.clone()
-
-    val N = input.size
+    val N = a.size
+    val input = ArrayList<Array<Numeric>>()
     val result = result2DOf(N)
     var sum: Numeric
 
     for (i in 0 until N) {
       //processing rows
-      input[i] = computeDiscreteHartleyTransform(input[i])
+      input.add(i, computeDiscreteHartleyTransform(a[i]))
       //      result[i] = computeDiscreteHartleyTransform(input[i]);
     }
 
@@ -118,15 +117,14 @@ class HartleyTransformations {
 
   fun computeReverseDiscreteHartleyTransform(a: Array<Array<Numeric>>): Array<Array<Numeric>> {
 
-    val input = a.clone()
-
-    val N = input.size
+    val N = a.size
+    val input = ArrayList<Array<Numeric>>()
     val result = result2DOf(N)
     var sum: Numeric
 
     for (i in 0 until N) {
       //processing rows
-      input[i] = computeReverseDiscreteHartleyTransform(input[i])
+      input.add(0, computeReverseDiscreteHartleyTransform(a[i]))
       //      result[i] = computeDiscreteHartleyTransform(input[i]);
     }
 

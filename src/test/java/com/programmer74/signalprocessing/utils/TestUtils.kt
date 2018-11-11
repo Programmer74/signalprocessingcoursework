@@ -1,5 +1,6 @@
 package com.programmer74.signalprocessing.utils
 
+import com.programmer74.signalprocessing.customnumerics.CustomFixedPointNumeric
 import com.programmer74.signalprocessing.customnumerics.Numeric
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 
@@ -39,3 +40,46 @@ fun assertArraysAreEqual(a1: Array<Numeric>, a2: Array<Numeric>) {
   }
 }
 
+fun computeRMSE(expected: Array<Numeric>, actual: Array<Numeric>): Double {
+  val s = (0 until expected.size).sumByDouble { Math.pow((expected[it].getValue() - actual[it].getValue()), 2.0) }
+  val sN = s / expected.size
+  return Math.sqrt(sN)
+}
+
+fun computeRMSE2D(expected: Array<Array<Numeric>>, actual: Array<Array<Numeric>>): Double {
+  var s = 0.0
+  for (i in 0 until expected.size) {
+    for (j in 0 until expected[i].size) {
+      s += Math.pow((expected[i][j].getValue() - actual[i][j].getValue()), 2.0)
+    }
+  }
+  val sN = s / expected.size
+  return Math.sqrt(sN)
+}
+
+fun createDummyMeasurement(n1: Int, n2: Int, N: Int): Array<Numeric> {
+  val bitsI = n1
+  val bitsM = n2 - n1
+  val result = Array<Numeric>(N, { CustomFixedPointNumeric(0.0, bitsI, bitsM) })
+  var x: Double
+  for (i in 0 until N) {
+    x = (i % n1).toDouble()
+    result[i] = CustomFixedPointNumeric(x, bitsI, bitsM)
+  }
+  return result
+}
+
+fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
+  val bitsI = n1
+  val bitsM = n2 - n1
+  val result =  Array(N, { Array(N, { CustomFixedPointNumeric(0.0, bitsI, bitsM) }) })
+      as Array<Array<Numeric>>
+  var x: Double
+  for (i in 0 until N) {
+    for (j in 0 until N) {
+      x = ((i + j) % n1).toDouble()
+      result[i][j] = CustomFixedPointNumeric(x, bitsI, bitsM)
+    }
+  }
+  return result
+}

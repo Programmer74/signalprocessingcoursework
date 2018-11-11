@@ -2,7 +2,7 @@ package com.programmer74.signalprocessing.hartleytransformations
 
 import com.programmer74.signalprocessing.RoundStrategy
 import com.programmer74.signalprocessing.customnumerics.customIntegerNumericArrayOf
-import com.programmer74.signalprocessing.utils.printArray
+import com.programmer74.signalprocessing.utils.*
 import org.junit.Test
 
 class CourseworkPlayground {
@@ -25,11 +25,38 @@ class CourseworkPlayground {
 
     val computedFPD = transformsFPD.computeDiscreteHartleyTransform(source)
     printArray("Computed via FixedPD", computedFPD)
+    println("RMSE: ${computeRMSE(computedDouble, computedFPD)}")
 
     val computedFPR = transformsFPR.computeDiscreteHartleyTransform(source)
     printArray("Computed via FixedPR", computedFPR)
+    println("RMSE: ${computeRMSE(computedDouble, computedFPR)}")
 
     val computedFPU = transformsFPU.computeDiscreteHartleyTransform(source)
     printArray("Computed via FixedPU", computedFPU)
+    println("RMSE: ${computeRMSE(computedDouble, computedFPU)}")
+  }
+
+  @Test
+  fun getRMSEbyN() {
+    var N: Int = 8
+
+    val transformsDouble = HartleyTransformations()
+
+    println("N,RMSE")
+
+    while (N <= 512) {
+
+      val source = createDummyMeasurement2D(n2, n3, N)
+
+      val transformed = transformsDouble.computeDiscreteHartleyTransform(source)
+      val transformedBack = transformsDouble.computeReverseDiscreteHartleyTransform(transformed)
+
+      val RMSE = computeRMSE2D(source, transformedBack)
+      println("${N},${RMSE}")
+
+      N += 64
+      if (N == 512 + 64) break
+      if (N > 512) N = 512
+    }
   }
 }
