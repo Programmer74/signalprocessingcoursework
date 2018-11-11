@@ -1,5 +1,6 @@
 package com.programmer74.signalprocessing.customnumerics
 
+import com.programmer74.signalprocessing.RoundStrategy
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.data.Percentage
 import org.junit.Test

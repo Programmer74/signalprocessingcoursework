@@ -1,5 +1,6 @@
 package com.programmer74.signalprocessing.hartleytransformations
 
+import com.programmer74.signalprocessing.RoundStrategy
 import com.programmer74.signalprocessing.customnumerics.CustomFixedPointNumeric
 import com.programmer74.signalprocessing.customnumerics.DoubleNumeric
 import com.programmer74.signalprocessing.customnumerics.Numeric
@@ -10,29 +11,36 @@ class HartleyTransformations {
 
   private val resultBits: Int
 
-  constructor() {
-    this.weightKBits = 0
-    this.resultBits = 0
-  }
+  private val roundingStrategy: RoundStrategy
 
-  constructor(n2: Int, n3: Int) {
+  constructor() : this (0, 0)
+
+  constructor(n2: Int, n3: Int) : this (n2, n3, RoundStrategy.ALWAYS_DOWN)
+
+  constructor(n2: Int, n3: Int, roundStrategy: RoundStrategy) {
     this.weightKBits = n2
     this.resultBits = n3
+    this.roundingStrategy = roundStrategy
   }
 
+  private fun customFPTOf(x: Double) =
+      CustomFixedPointNumeric(x, weightKBits - 3, 2, roundingStrategy)
+
+  private fun customFPROf(x: Double) =
+      CustomFixedPointNumeric(x, resultBits - 3, 2, roundingStrategy)
 
   private fun valueOf(x: Double): Numeric =
       if (weightKBits == 0 && resultBits == 0) {
         DoubleNumeric(x)
       } else {
-        CustomFixedPointNumeric(x, weightKBits)
+        customFPTOf(x)
       }
 
   private fun resultOf(N: Int): Array<Numeric> =
       if (weightKBits == 0 && resultBits == 0) {
         Array(N, { DoubleNumeric(0.0) })
       } else {
-        Array(N, { CustomFixedPointNumeric(0.0, resultBits - 5, 4) })
+        Array(N, { customFPROf(0.0) })
       }
 
   private fun result2DOf(N: Int): Array<Array<Numeric>> =
@@ -40,7 +48,7 @@ class HartleyTransformations {
         Array(N, { Array(N, { DoubleNumeric(0.0) }) })
             as Array<Array<Numeric>>
       } else {
-        Array(N, { Array(N, { CustomFixedPointNumeric(0.0, resultBits - 3, 2) }) })
+        Array(N, { Array(N, { customFPROf(0.0) }) })
             as Array<Array<Numeric>>
       }
 

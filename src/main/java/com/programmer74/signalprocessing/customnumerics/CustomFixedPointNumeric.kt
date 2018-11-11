@@ -1,11 +1,8 @@
 package com.programmer74.signalprocessing.customnumerics
 
+import com.programmer74.signalprocessing.RoundStrategy
 import com.programmer74.signalprocessing.appendOne
 import java.util.*
-
-enum class RoundStrategy {
-  ALWAYS_UP, ALWAYS_DOWN, ROUND
-}
 
 class CustomFixedPointNumeric : Numeric {
 
@@ -87,10 +84,10 @@ class CustomFixedPointNumeric : Numeric {
         }
       }
     }
-    roundIfNecessary(frPart)
+    roundIfNecessary(frPart, sign)
   }
 
-  private fun roundIfNecessary(fractionPart: Double) {
+  private fun roundIfNecessary(fractionPart: Double, sign: Boolean) {
     var frPart = fractionPart
     if (frPart == 0.0) {
       errlog("No rounding required")
@@ -106,8 +103,15 @@ class CustomFixedPointNumeric : Numeric {
         }
         RoundStrategy.ROUND -> {
           errlog("Rounding...")
-          frPart *= 2
-          if (frPart > 1.0) {
+          var onesCount = 0
+          for (i in 0..3) {
+            frPart *= 2
+            if (frPart >= 1.0) {
+              onesCount++
+              frPart -= 1
+            }
+          }
+          if (onesCount >= 2) {
             errlog("Rounding said YES")
             bits.appendOne(bitsSize)
           } else {
@@ -116,6 +120,7 @@ class CustomFixedPointNumeric : Numeric {
         }
       }
     }
+    bits.set(0, sign)
   }
 
   override fun getValue(): Double {

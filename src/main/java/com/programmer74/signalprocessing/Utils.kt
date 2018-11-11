@@ -18,3 +18,7 @@ public fun BitSet.appendOne(actualSize: Int) {
     }
   }
 }
+
+public enum class RoundStrategy {
+  ALWAYS_UP, ALWAYS_DOWN, ROUND
+}
