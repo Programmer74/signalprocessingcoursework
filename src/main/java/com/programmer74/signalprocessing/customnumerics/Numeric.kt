@@ -45,3 +45,13 @@ fun customfixedPointNumericArrayOf(vararg elements: Double): Array<Numeric> {
   }
   return result
 }
+
+fun customIntegerNumericArrayOf(n1: Int, n2: Int, vararg elements: Int): Array<Numeric> {
+  val bitsI = n1
+  val bitsM = n2 - n1
+  val result = Array<Numeric>(elements.size, { CustomFixedPointNumeric(0.0, bitsI, bitsM) })
+  for (i in 0 until elements.size) {
+    result[i] = CustomFixedPointNumeric(elements[i].toDouble(), bitsI, bitsM)
+  }
+  return result
+}

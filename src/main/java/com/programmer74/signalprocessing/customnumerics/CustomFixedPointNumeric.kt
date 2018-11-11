@@ -1,16 +1,22 @@
 package com.programmer74.signalprocessing.customnumerics
 
+import com.programmer74.signalprocessing.appendOne
 import java.util.*
 
-class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPerFractional: Int) : Numeric {
+enum class RoundStrategy {
+  ALWAYS_UP, ALWAYS_DOWN, ROUND
+}
 
+class CustomFixedPointNumeric : Numeric {
+
+  private val bitsPerInteger: Int
+  private val bitsPerFractional: Int
   private val bitsPerS = 1
-  private val bitsSize: Int = bitsPerS + bitsPerInteger + bitsPerFractional
-  private val bits = BitSet(bitsSize)
+  private val bitsSize: Int
+  private val bits: BitSet
+  private val roundStrategy: RoundStrategy
 
   private val shouldDebug = false
-
-  constructor(x: Double, bitsSize: Int) : this (x, (bitsSize) * 3 / 4, bitsSize - (bitsSize) * 3 / 4 - 1)
 
   private fun log(s: String) {
     if (shouldDebug) {
@@ -18,7 +24,34 @@ class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPe
     }
   }
 
-  init {
+  private fun errlog(s: String) {
+    if (shouldDebug) {
+      System.err.println(s)
+    }
+  }
+
+  constructor(x: Double, bitsSize: Int) : this (x, (bitsSize) * 1 / 4, bitsSize - (bitsSize) * 1 / 4 - 1,
+      RoundStrategy.ALWAYS_DOWN)
+
+  constructor(bitsPerInteger: Int, bitsPerFractional: Int, newbits: BitSet) :
+      this (bitsPerInteger, bitsPerFractional, newbits, RoundStrategy.ALWAYS_DOWN)
+
+  constructor(bitsPerInteger: Int, bitsPerFractional: Int, newbits: BitSet, roundStrategy: RoundStrategy) :
+      this (0.0, bitsPerInteger, bitsPerFractional, roundStrategy){
+    for (i in 0..bitsPerInteger + bitsPerFractional + 1) {
+      this.bits.set(i, newbits.get(i))
+    }
+  }
+
+  constructor(x: Double, bitsPerInteger: Int, bitsPerFractional: Int) :
+      this (x, bitsPerInteger, bitsPerFractional, RoundStrategy.ALWAYS_DOWN)
+
+  constructor(x: Double, bitsPerInteger: Int, bitsPerFractional: Int, roundStrategy: RoundStrategy) {
+    this.bitsPerInteger = bitsPerInteger
+    this.bitsPerFractional = bitsPerFractional
+    this.bitsSize = bitsPerS + bitsPerInteger + bitsPerFractional
+    this.bits = BitSet(bitsSize)
+    this.roundStrategy = roundStrategy
 
     log("==============")
     log("Value: ${x}")
@@ -51,6 +84,35 @@ class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPe
         frPart -= 1
         if (frPart.equals(0)) {
           break
+        }
+      }
+    }
+    roundIfNecessary(frPart)
+  }
+
+  private fun roundIfNecessary(fractionPart: Double) {
+    var frPart = fractionPart
+    if (frPart == 0.0) {
+      errlog("No rounding required")
+    } else {
+      errlog("Rounding required")
+      when (roundStrategy) {
+        RoundStrategy.ALWAYS_DOWN -> {
+          errlog("Dropping plane")
+        }
+        RoundStrategy.ALWAYS_UP -> {
+          errlog("Increasing by one")
+          bits.appendOne(bitsSize)
+        }
+        RoundStrategy.ROUND -> {
+          errlog("Rounding...")
+          frPart *= 2
+          if (frPart > 1.0) {
+            errlog("Rounding said YES")
+            bits.appendOne(bitsSize)
+          } else {
+            errlog("Rounding said NO")
+          }
         }
       }
     }
@@ -100,43 +162,51 @@ class CustomFixedPointNumeric(val x: Double, val bitsPerInteger: Int, val bitsPe
   }
 
   override fun plus(y: Double): Numeric {
-    return CustomFixedPointNumeric(y + getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y + getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun plus(y: Numeric): Numeric {
-    return CustomFixedPointNumeric(y.getValue() + getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y.getValue() + getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun minus(y: Double): Numeric {
-    return CustomFixedPointNumeric(y - getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y - getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun minus(y: Numeric): Numeric {
-    return CustomFixedPointNumeric(y.getValue() - getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y.getValue() - getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun times(y: Double): Numeric {
-    return CustomFixedPointNumeric(y * getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y * getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun times(y: Numeric): Numeric {
-    return CustomFixedPointNumeric(y.getValue() * getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(y.getValue() * getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun div(y: Double): Numeric {
-    return CustomFixedPointNumeric(getValue() / y, bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(getValue() / y,
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun div(y: Numeric): Numeric {
-    return CustomFixedPointNumeric(getValue() / y.getValue(), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(getValue() / y.getValue(),
+        bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun computeSin(): Numeric {
-    return CustomFixedPointNumeric(Math.sin(getValue()), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(Math.sin(getValue()), bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun computeCos(): Numeric {
-    return CustomFixedPointNumeric(Math.cos(getValue()), bitsPerInteger, bitsPerFractional)
+    return CustomFixedPointNumeric(Math.cos(getValue()), bitsPerInteger, bitsPerFractional, roundStrategy)
   }
 
   override fun equals(other: Any?): Boolean {
