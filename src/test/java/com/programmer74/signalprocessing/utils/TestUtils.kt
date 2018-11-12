@@ -78,7 +78,7 @@ fun createDummyMeasurement2D1(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
   var x: Double
   for (i in 0 until N) {
     for (j in 0 until N) {
-      x = ((i + j) % n1).toDouble()
+      x = ((i + j) % 64).toDouble()
       result[i][j] = CustomFixedPointNumeric(x, bitsI, bitsM)
     }
   }

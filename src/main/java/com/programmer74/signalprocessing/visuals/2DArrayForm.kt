@@ -14,14 +14,14 @@ class Array2DForm : JFrame {
   val w: Int
   val h: Int
 
-  constructor(caption: String, values: Array<Array<Numeric>>) : super(caption) {
+  constructor(caption: String, values: Array<Array<Numeric>>, wantedW: Int, wantedH: Int) : super(caption) {
     this.values = values
     w = values.size
     h = values[0].size
     image = BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR)
     fillImage()
-    preferredSize = Dimension(w, h)
-    size = Dimension(w, h)
+    preferredSize = Dimension(wantedW, wantedH)
+    size = Dimension(wantedW, wantedH)
   }
 
   fun fillImage() {
@@ -47,8 +47,8 @@ class Array2DForm : JFrame {
 
     var px = 0
     var py = 0
-    var pw: Int = w
-    var ph: Int = h
+    var pw: Int = width
+    var ph: Int = height
 
     g.drawImage(image, px, py, pw, ph, null)
 

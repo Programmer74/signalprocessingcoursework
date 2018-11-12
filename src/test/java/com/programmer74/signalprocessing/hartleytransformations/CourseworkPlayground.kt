@@ -11,7 +11,7 @@ class CourseworkPlayground {
 
   private val n1: Int = 10
   private val n2: Int = 12
-  private val n3: Int = 16
+  private val n3: Int = 32
 
   @Test
   fun hartleyTransformWorksForCustomFixedPoint() {
@@ -64,20 +64,21 @@ class CourseworkPlayground {
 
   @Test
   fun checkVisuals() {
-    val N: Int = 256
+    val N: Int = 64
 
-    val transformsDouble = HartleyTransformations()
-    val source = createDummyMeasurement2D(n2, n3, N)
+//    val transforms = HartleyTransformations()
+    val transforms = HartleyTransformations(n2, n3, RoundStrategy.ROUND)
+    val source = createDummyMeasurement2D(n1, n2, N)
 
-    val sourceForm = Array2DForm("Source", source)
+    val sourceForm = Array2DForm("Source", source, 256, 256)
     sourceForm.isVisible = true
 
-    val computed = transformsDouble.computeDiscreteHartleyTransform(source)
-    val computedForm = Array2DForm("Computed", computed)
+    val computed = transforms.computeDiscreteHartleyTransform(source)
+    val computedForm = Array2DForm("Computed", computed, 256, 256)
     computedForm.isVisible = true
 
-    val computedBack = transformsDouble.computeReverseDiscreteHartleyTransform(computed)
-    val computedBackForm = Array2DForm("Computed Back", computedBack)
+    val computedBack = transforms.computeReverseDiscreteHartleyTransform(computed)
+    val computedBackForm = Array2DForm("Computed Back", computedBack, 256, 256)
     computedBackForm.isVisible = true
 
     val latch = CountDownLatch(1)
