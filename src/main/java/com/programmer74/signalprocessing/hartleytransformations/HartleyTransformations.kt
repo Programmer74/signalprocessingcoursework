@@ -124,7 +124,7 @@ class HartleyTransformations {
 
     for (i in 0 until N) {
       //processing rows
-      input.add(0, computeReverseDiscreteHartleyTransform(a[i]))
+      input.add(i, computeReverseDiscreteHartleyTransform(a[i]))
       //      result[i] = computeDiscreteHartleyTransform(input[i]);
     }
 
