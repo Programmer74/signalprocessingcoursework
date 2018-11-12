@@ -15,6 +15,8 @@ class CustomFixedPointNumeric : Numeric {
 
   private val shouldDebug = false
 
+  private var valueCached: Double? = null
+
   private fun log(s: String) {
     if (shouldDebug) {
       println(s)
@@ -124,6 +126,13 @@ class CustomFixedPointNumeric : Numeric {
   }
 
   override fun getValue(): Double {
+    if (valueCached == null) {
+      valueCached = computeValue()
+    }
+    return valueCached!!
+  }
+
+  private fun computeValue(): Double {
 
     log("=======--------")
 
