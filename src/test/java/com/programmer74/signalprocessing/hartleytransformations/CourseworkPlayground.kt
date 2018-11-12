@@ -3,7 +3,9 @@ package com.programmer74.signalprocessing.hartleytransformations
 import com.programmer74.signalprocessing.RoundStrategy
 import com.programmer74.signalprocessing.customnumerics.customIntegerNumericArrayOf
 import com.programmer74.signalprocessing.utils.*
+import com.programmer74.signalprocessing.visuals.Array2DForm
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
 
 class CourseworkPlayground {
 
@@ -58,5 +60,27 @@ class CourseworkPlayground {
       if (N == 512 + 64) break
       if (N > 512) N = 512
     }
+  }
+
+  @Test
+  fun checkVisuals() {
+    val N: Int = 256
+
+    val transformsDouble = HartleyTransformations()
+    val source = createDummyMeasurement2D(n2, n3, N)
+
+    val sourceForm = Array2DForm("Source", source)
+    sourceForm.isVisible = true
+
+    val computed = transformsDouble.computeDiscreteHartleyTransform(source)
+    val computedForm = Array2DForm("Computed", computed)
+    computedForm.isVisible = true
+
+    val computedBack = transformsDouble.computeReverseDiscreteHartleyTransform(computed)
+    val computedBackForm = Array2DForm("Computed Back", computedBack)
+    computedBackForm.isVisible = true
+
+    val latch = CountDownLatch(1)
+    latch.await()
   }
 }

@@ -1,6 +1,7 @@
 package com.programmer74.signalprocessing.utils
 
 import com.programmer74.signalprocessing.customnumerics.CustomFixedPointNumeric
+import com.programmer74.signalprocessing.customnumerics.DoubleNumeric
 import com.programmer74.signalprocessing.customnumerics.Numeric
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 
@@ -69,7 +70,7 @@ fun createDummyMeasurement(n1: Int, n2: Int, N: Int): Array<Numeric> {
   return result
 }
 
-fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
+fun createDummyMeasurement2D1(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
   val bitsI = n1
   val bitsM = n2 - n1
   val result =  Array(N, { Array(N, { CustomFixedPointNumeric(0.0, bitsI, bitsM) }) })
@@ -79,6 +80,21 @@ fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
     for (j in 0 until N) {
       x = ((i + j) % n1).toDouble()
       result[i][j] = CustomFixedPointNumeric(x, bitsI, bitsM)
+    }
+  }
+  return result
+}
+
+fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
+  val bitsI = n1
+  val bitsM = n2 - n1
+  val result =  Array(N, { Array(N, { DoubleNumeric(0.0) }) })
+      as Array<Array<Numeric>>
+  var x: Double
+  for (i in 0 until N) {
+    for (j in 0 until N) {
+      x = ((i + j) % n1).toDouble()
+      result[i][j] = DoubleNumeric(x)
     }
   }
   return result
