@@ -70,21 +70,7 @@ fun createDummyMeasurement(n1: Int, n2: Int, N: Int): Array<Numeric> {
   return result
 }
 
-fun createDummyMeasurement2D1(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
-  val bitsI = n1
-  val bitsM = n2 - n1
-  val result =  Array(N, { Array(N, { CustomFixedPointNumeric(0.0, bitsI, bitsM) }) })
-      as Array<Array<Numeric>>
-  var x: Double
-  for (i in 0 until N) {
-    for (j in 0 until N) {
-      x = ((i + j) % 64).toDouble()
-      result[i][j] = CustomFixedPointNumeric(x, bitsI, bitsM)
-    }
-  }
-  return result
-}
-
+@Deprecated("Use createMeasurement2D()")
 fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
   val bitsI = n1
   val bitsM = n2 - n1
@@ -98,4 +84,32 @@ fun createDummyMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
     }
   }
   return result
+}
+
+fun createMeasurement2D(n1: Int, n2: Int, N: Int): Array<Array<Numeric>> {
+  val bitsPerInteger = n1
+  val bitsPerFractional = n2 - n1
+
+  fun valueOf(x: Double) : Numeric = CustomFixedPointNumeric(x, bitsPerInteger, bitsPerFractional)
+
+  val result =  Array(N, { Array(N, { valueOf(0.0) }) })
+
+  val maxAmplitude = 256.0
+
+  for (i in 0 until N) {
+    for (j in 0 until N) {
+      result[i][j] = DoubleNumeric(0.0)
+      if ((i > N * 1 / 5) && (i < N * 4 / 5)) {
+        if ((j > N * 1 / 4) && (j < N * 3 / 4)) {
+          result[i][j] = valueOf(getMeasurementInsideRect(maxAmplitude, i, j))
+        }
+      }
+    }
+  }
+  return result
+}
+
+fun getMeasurementInsideRect(amplitude: Double, x: Int, y: Int): Double {
+  var value = amplitude % (x + y)
+  return value
 }

@@ -14,7 +14,7 @@ class CourseworkPlayground {
   private val n3: Int = 32
 
   @Test
-  fun hartleyTransformWorksForCustomFixedPoint() {
+  fun `0 Ensure that transformations and rounding actually work`() {
     val source = customIntegerNumericArrayOf(n1, n2, 0, 1, 2, 3, 4, 5, 6, 7)
     val transformsDouble = HartleyTransformations()
     val transformsFPD = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_DOWN)
@@ -39,35 +39,11 @@ class CourseworkPlayground {
   }
 
   @Test
-  fun getRMSEbyN() {
-    var N: Int = 8
-
-    val transformsDouble = HartleyTransformations()
-
-    println("N,RMSE")
-
-    while (N <= 512) {
-
-      val source = createDummyMeasurement2D(n2, n3, N)
-
-      val transformed = transformsDouble.computeDiscreteHartleyTransform(source)
-      val transformedBack = transformsDouble.computeReverseDiscreteHartleyTransform(transformed)
-
-      val RMSE = computeRMSE2D(source, transformedBack)
-      println("${N},${RMSE}")
-
-      N += 64
-      if (N == 512 + 64) break
-      if (N > 512) N = 512
-    }
-  }
-
-  @Test
-  fun checkVisuals() {
+  fun `0 Show 2d example with correct source image`() {
     val N: Int = 48
 
     val transforms = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
-    val source = createDummyMeasurement2D (n1, n2, N)
+    val source = createMeasurement2D (n1, n2, N)
 
     val sourceForm = Array2DForm("Source", source, 256, 256)
     sourceForm.isVisible = true
@@ -86,4 +62,29 @@ class CourseworkPlayground {
     val latch = CountDownLatch(1)
     latch.await()
   }
+
+  @Test
+  fun `1 Show how RMSE depends on N`() {
+    var N: Int = 8
+
+    val transformsDouble = HartleyTransformations()
+
+    println("N,RMSE")
+
+    while (N <= 512) {
+
+      val source = createMeasurement2D(n2, n3, N)
+
+      val transformed = transformsDouble.computeDiscreteHartleyTransform(source)
+      val transformedBack = transformsDouble.computeReverseDiscreteHartleyTransform(transformed)
+
+      val RMSE = computeRMSE2D(source, transformedBack)
+      println("${N},${RMSE}")
+
+      N += 64
+      if (N == 512 + 64) break
+      if (N > 512) N = 512
+    }
+  }
+
 }

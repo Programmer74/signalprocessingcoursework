@@ -5,7 +5,6 @@ import org.junit.Test
 
 import com.programmer74.signalprocessing.utils.assertArraysAreEqual
 import com.programmer74.signalprocessing.utils.printArray
-import org.junit.Ignore
 
 class HartleyTransformationsTest {
 
