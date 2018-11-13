@@ -4,39 +4,16 @@ import com.programmer74.signalprocessing.RoundStrategy
 import com.programmer74.signalprocessing.customnumerics.customIntegerNumericArrayOf
 import com.programmer74.signalprocessing.utils.*
 import com.programmer74.signalprocessing.visuals.Array2DForm
+import org.junit.Ignore
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
 
+@Ignore
 class CourseworkPlayground {
 
   private val n1: Int = 10
   private val n2: Int = 12
-  private val n3: Int = 32
-
-  @Test
-  fun `0 Ensure that transformations and rounding actually work`() {
-    val source = customIntegerNumericArrayOf(n1, n2, 0, 1, 2, 3, 4, 5, 6, 7)
-    val transformsDouble = HartleyTransformations()
-    val transformsFPD = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_DOWN)
-    val transformsFPR = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
-    val transformsFPU = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_UP)
-    printArray("Source", source)
-
-    val computedDouble = transformsDouble.computeDiscreteHartleyTransform(source)
-    printArray("Computed via Double", computedDouble)
-
-    val computedFPD = transformsFPD.computeDiscreteHartleyTransform(source)
-    printArray("Computed via FixedPD", computedFPD)
-    println("RMSE: ${computeRMSE(computedDouble, computedFPD)}")
-
-    val computedFPR = transformsFPR.computeDiscreteHartleyTransform(source)
-    printArray("Computed via FixedPR", computedFPR)
-    println("RMSE: ${computeRMSE(computedDouble, computedFPR)}")
-
-    val computedFPU = transformsFPU.computeDiscreteHartleyTransform(source)
-    printArray("Computed via FixedPU", computedFPU)
-    println("RMSE: ${computeRMSE(computedDouble, computedFPU)}")
-  }
+  private val n3: Int = 16
 
   @Test
   fun `0 Show 2d example with correct source image`() {
@@ -64,7 +41,7 @@ class CourseworkPlayground {
   }
 
   @Test
-  fun `1 Show how RMSE depends on N`() {
+  fun `1 Show how RMSE depends on N for ideal usecase`() {
     var N: Int = 8
 
     val transformsDouble = HartleyTransformations()
@@ -87,4 +64,95 @@ class CourseworkPlayground {
     }
   }
 
+  @Test
+  fun `2 Show how RMSE depends on rounding for not-ideal usecase`() {
+
+    var N: Int = 8
+
+    val transformsDouble = HartleyTransformations()
+    val transformsFPD = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_DOWN)
+    val transformsFPR = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
+    val transformsFPU = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_UP)
+
+    println("N,RMSE trunc,RMSE round,RMSE up")
+
+    while (N <= 512) {
+
+      val source = createMeasurement2D(n2, n3, N)
+      val computedDouble = transformsDouble.computeDiscreteHartleyTransform(source)
+
+      print("$N")
+      System.out.flush()
+
+      val computedFPD = transformsFPD.computeDiscreteHartleyTransform(source)
+      val rmseFPD = computeRMSE2D(computedDouble, computedFPD)
+      print(",$rmseFPD")
+      System.out.flush()
+
+      val computedFPR = transformsFPR.computeDiscreteHartleyTransform(source)
+      val rmseFPR = computeRMSE2D(computedDouble, computedFPR)
+      print(",$rmseFPR")
+      System.out.flush()
+
+      val computedFPU = transformsFPU.computeDiscreteHartleyTransform(source)
+      val rmseFPU = computeRMSE2D(computedDouble, computedFPU)
+      println(",$rmseFPU")
+
+      N += 64
+      if (N == 512 + 64) break
+      if (N > 512) N = 512
+    }
+  }
+
+  @Test
+  fun `3 Show how RMSE depends on changing source array bits size when rounding`() {
+
+    var N: Int = 8
+
+    val transformsDouble = HartleyTransformations()
+    val transformsResultZero = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
+    val transformsResultPlusTwoBits = HartleyTransformations(n1, n2, n3 + 2, RoundStrategy.ROUND)
+    val transformsResultPlusFourBits = HartleyTransformations(n1, n2, n3 + 4, RoundStrategy.ROUND)
+    val transformsWeightPlusTwoBits = HartleyTransformations(n1, n2 + 2, n3, RoundStrategy.ROUND)
+    val transformsWeightPlusFourBits = HartleyTransformations(n1, n2 + 4, n3, RoundStrategy.ROUND)
+
+
+    println("N,RMSE zero,RMSE source +2bits,RMSE source +4bits,RMSE weight +2bits,RMSE weight +4bits")
+
+    while (N <= 64) {
+
+      val source = createMeasurement2D(n2, n3, N)
+      val computedDouble = transformsDouble.computeDiscreteHartleyTransform(source)
+
+      print("$N")
+      System.out.flush()
+
+      val computedResultZero = transformsResultZero.computeDiscreteHartleyTransform(source)
+      val rmseZero = computeRMSE2D(computedDouble, computedResultZero)
+      print(",$rmseZero")
+      System.out.flush()
+
+      val computedResultPlus2 = transformsResultPlusTwoBits.computeDiscreteHartleyTransform(source)
+      val rmseRPlus2 = computeRMSE2D(computedDouble, computedResultPlus2)
+      print(",$rmseRPlus2")
+      System.out.flush()
+
+      val computedResultPlus4 = transformsResultPlusFourBits.computeDiscreteHartleyTransform(source)
+      val rmseRPlus4 = computeRMSE2D(computedDouble, computedResultPlus4)
+      print(",$rmseRPlus4")
+      System.out.flush()
+
+      val computedWeightPlus2 = transformsWeightPlusTwoBits.computeDiscreteHartleyTransform(source)
+      val rmseWPlus2 = computeRMSE2D(computedDouble, computedWeightPlus2)
+      print(",$rmseWPlus2")
+      System.out.flush()
+
+      val computedWeightPlus4 = transformsWeightPlusFourBits.computeDiscreteHartleyTransform(source)
+      val rmseWPlus4 = computeRMSE2D(computedDouble, computedWeightPlus4)
+      println(",$rmseWPlus4")
+      System.out.flush()
+
+      N += 8
+    }
+  }
 }

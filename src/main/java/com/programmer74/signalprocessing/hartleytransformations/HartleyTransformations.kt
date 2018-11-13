@@ -39,7 +39,7 @@ class HartleyTransformations {
       if (weightKBits == 0 && resultBits == 0) {
         DoubleNumeric(x)
       } else {
-        CustomFixedPointNumeric(x, weightKBits, resultBits - weightKBits, roundingStrategy)
+        CustomFixedPointNumeric(x, resultBits - 2, 2, roundingStrategy)
       }
 
   private fun zero() : Numeric = resultValueOf(0.0)
