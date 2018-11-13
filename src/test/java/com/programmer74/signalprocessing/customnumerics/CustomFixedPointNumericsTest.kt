@@ -56,7 +56,7 @@ class CustomFixedPointNumericsTest {
 
     val sourceValues = listOf(5.0, 5.0 / 3.0, 5.0 / 9.0, 5.0 / 27.0)
     val expectedValuesForAlwaysUp = listOf(5.0, 1.671875, 0.5625, 0.1875)
-    val expectedValuesForRounding = listOf(5.0, 1.6640625, 0.5546875, 0.1875)
+    val expectedValuesForRounding = listOf(5.0, 1.671875, 0.5546875, 0.1875)
     val expectedValuesForAlwaysDown = listOf(5.0, 1.6640625, 0.5546875, 0.1796875)
     val expectedValuesByDefault = listOf(5.0, 1.6640625, 0.5546875, 0.1796875)
 

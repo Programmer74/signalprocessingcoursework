@@ -7,55 +7,54 @@ import com.programmer74.signalprocessing.customnumerics.Numeric
 
 class HartleyTransformations {
 
+  private val sourceBits: Int
+
   private val weightKBits: Int
 
   private val resultBits: Int
 
   private val roundingStrategy: RoundStrategy
 
-  constructor() : this (0, 0)
+  constructor() : this (0, 0, 0)
 
-  constructor(n2: Int, n3: Int) : this (n2, n3, RoundStrategy.ALWAYS_DOWN)
+  constructor(n1: Int, n2: Int, n3: Int) : this (n1, n2, n3, RoundStrategy.ALWAYS_DOWN)
 
-  constructor(n2: Int, n3: Int, roundStrategy: RoundStrategy) {
+  constructor(n1: Int, n2: Int, n3: Int, roundStrategy: RoundStrategy) {
+    this.sourceBits = n1
     this.weightKBits = n2
     this.resultBits = n3
     this.roundingStrategy = roundStrategy
   }
 
-  private fun customFPTOf(x: Double) =
-      CustomFixedPointNumeric(x, weightKBits - 3, 2, roundingStrategy)
+  private fun actualValueOf(x: Double): Numeric = DoubleNumeric(x)
 
-  private fun customFPROf(x: Double) =
-      CustomFixedPointNumeric(x, resultBits - 3, 2, roundingStrategy)
-
-  private fun valueOf(x: Double): Numeric =
+  private fun weightValueOf(x: Double): Numeric =
       if (weightKBits == 0 && resultBits == 0) {
         DoubleNumeric(x)
       } else {
-        customFPTOf(x)
+        CustomFixedPointNumeric(x, 2, weightKBits - 2, roundingStrategy)
       }
+
+  private fun resultValueOf(x: Double): Numeric =
+      if (weightKBits == 0 && resultBits == 0) {
+        DoubleNumeric(x)
+      } else {
+        CustomFixedPointNumeric(x, weightKBits, resultBits - weightKBits, roundingStrategy)
+      }
+
+  private fun zero() : Numeric = resultValueOf(0.0)
 
   private fun resultOf(N: Int): Array<Numeric> =
-      if (weightKBits == 0 && resultBits == 0) {
-        Array(N, { DoubleNumeric(0.0) })
-      } else {
-        Array(N, { customFPROf(0.0) })
-      }
+        Array(N, { resultValueOf(0.0) })
 
   private fun result2DOf(N: Int): Array<Array<Numeric>> =
-      if (weightKBits == 0 && resultBits == 0) {
-        Array(N, { Array(N, { DoubleNumeric(0.0) }) })
-            as Array<Array<Numeric>>
-      } else {
-        Array(N, { Array(N, { customFPROf(0.0) }) })
-            as Array<Array<Numeric>>
-      }
+        Array(N, { Array(N, { resultValueOf(0.0) }) })
 
   private fun cas(x: Numeric) : Numeric {
     val a = x.computeCos()
     val b = x.computeSin()
-    return a + b
+    val s = a + b
+    return weightValueOf(s.getValue())
   }
 
   fun computeDiscreteHartleyTransform(input: Array<Numeric>): Array<Numeric> {
@@ -64,7 +63,7 @@ class HartleyTransformations {
     var sum: Numeric
 
     for (n in 0 until N) {
-      sum = valueOf(0.0)
+      sum = zero()
       for (k in 0 until N) {
         sum += input[k] * computeCk(N, n * k)
       }
@@ -79,7 +78,7 @@ class HartleyTransformations {
     var sum: Numeric
 
     for (m in 0 until N) {
-      sum = valueOf(0.0)
+      sum = zero()
       for (n in 0 until N) {
         sum += input[n] * computeCk(N, m * n)
       }
@@ -104,7 +103,7 @@ class HartleyTransformations {
     for (j in 0 until N) {
       //processing columns
       for (n in 0 until N) {
-        sum = valueOf(0.0)
+        sum = zero()
         for (k in 0 until N) {
           sum += input[k][j] * computeCk(N, n * k)
         }
@@ -131,7 +130,7 @@ class HartleyTransformations {
     for (j in 0 until N) {
       //processing columns
       for (n in 0 until N) {
-        sum = valueOf(0.0)
+        sum = zero()
         for (k in 0 until N) {
           sum += input[k][j] * computeCk(N, n * k)
         }
@@ -143,15 +142,16 @@ class HartleyTransformations {
   }
 
   private fun computeCk(N: Int, K: Int): Numeric {
-    val pi = valueOf(Math.PI)
-    val two = valueOf(2.0)
-    val k = valueOf(K.toDouble())
-    val n = valueOf(N.toDouble())
-    return cas(two * pi * k / n)
+    val pi = actualValueOf(Math.PI)
+    val two = actualValueOf(2.0)
+    val k = K.toDouble()
+    val n = N.toDouble()
+    val z = cas(two * pi * k / n)
+    return z
   }
 
   fun computeHartleyMatrix(N: Int): Array<Array<Numeric>> {
-    val result = Array(N, { Array(N, { valueOf(0.0)} ) })
+    val result = Array(N, { Array(N, { zero() } ) })
     for (i in 0 until N) {
       for (j in 0 until N) {
         result[i][j] = computeCk(N, i * j)

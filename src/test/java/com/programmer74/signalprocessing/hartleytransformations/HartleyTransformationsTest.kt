@@ -25,7 +25,6 @@ class HartleyTransformationsTest {
     assertArraysAreEqual(source, computedBack)
   }
 
-  @Ignore
   @Test
   fun hartley2DTransformWorks() {
     val source = arrayOf(
@@ -44,7 +43,6 @@ class HartleyTransformationsTest {
   }
 
   @Test
-  @Ignore
   fun hartleyMatrixGenerationWorks() {
     val matrix2 = arrayOf(doubleNumericArrayOf(1.0, 1.0), doubleNumericArrayOf(1.0, -1.0))
     val computedMatrix2 = transforms.computeHartleyMatrix(2)

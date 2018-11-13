@@ -17,9 +17,9 @@ class CourseworkPlayground {
   fun hartleyTransformWorksForCustomFixedPoint() {
     val source = customIntegerNumericArrayOf(n1, n2, 0, 1, 2, 3, 4, 5, 6, 7)
     val transformsDouble = HartleyTransformations()
-    val transformsFPD = HartleyTransformations(n2, n3, RoundStrategy.ALWAYS_DOWN)
-    val transformsFPR = HartleyTransformations(n2, n3, RoundStrategy.ROUND)
-    val transformsFPU = HartleyTransformations(n2, n3, RoundStrategy.ALWAYS_UP)
+    val transformsFPD = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_DOWN)
+    val transformsFPR = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
+    val transformsFPU = HartleyTransformations(n1, n2, n3, RoundStrategy.ALWAYS_UP)
     printArray("Source", source)
 
     val computedDouble = transformsDouble.computeDiscreteHartleyTransform(source)
@@ -64,11 +64,10 @@ class CourseworkPlayground {
 
   @Test
   fun checkVisuals() {
-    val N: Int = 64
+    val N: Int = 48
 
-//    val transforms = HartleyTransformations()
-    val transforms = HartleyTransformations(n2, n3, RoundStrategy.ROUND)
-    val source = createDummyMeasurement2D(n1, n2, N)
+    val transforms = HartleyTransformations(n1, n2, n3, RoundStrategy.ROUND)
+    val source = createDummyMeasurement2D (n1, n2, N)
 
     val sourceForm = Array2DForm("Source", source, 256, 256)
     sourceForm.isVisible = true
@@ -80,6 +79,9 @@ class CourseworkPlayground {
     val computedBack = transforms.computeReverseDiscreteHartleyTransform(computed)
     val computedBackForm = Array2DForm("Computed Back", computedBack, 256, 256)
     computedBackForm.isVisible = true
+
+    val RMSE = computeRMSE2D(source, computedBack)
+    println("${N},${RMSE}")
 
     val latch = CountDownLatch(1)
     latch.await()
