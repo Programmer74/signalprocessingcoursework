@@ -117,7 +117,7 @@ class CourseworkPlayground {
     val transformsWeightPlusFourBits = HartleyTransformations(n1, n2 + 4, n3, RoundStrategy.ROUND)
 
 
-    println("N,RMSE zero,RMSE source +2bits,RMSE source +4bits,RMSE weight +2bits,RMSE weight +4bits")
+    println("N,RMSE zero,RMSE result +2bits,RMSE result +4bits,RMSE weight +2bits,RMSE weight +4bits")
 
     while (N <= 64) {
 
