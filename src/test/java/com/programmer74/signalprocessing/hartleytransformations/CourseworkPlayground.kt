@@ -1,8 +1,8 @@
 package com.programmer74.signalprocessing.hartleytransformations
 
 import com.programmer74.signalprocessing.RoundStrategy
-import com.programmer74.signalprocessing.customnumerics.customIntegerNumericArrayOf
-import com.programmer74.signalprocessing.utils.*
+import com.programmer74.signalprocessing.utils.computeRMSE2D
+import com.programmer74.signalprocessing.utils.createMeasurement2D
 import com.programmer74.signalprocessing.visuals.Array2DForm
 import org.junit.Ignore
 import org.junit.Test
